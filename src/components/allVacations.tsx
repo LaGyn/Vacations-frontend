@@ -2,10 +2,9 @@
 import { Box, Button, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material"
 import { useEffect, useState } from "react";
 import { VacationRequest } from "../types";
-import { apiBaseUrl } from "../constants";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import axios from "axios";
+import requestService from "../services/vacRequests";
 
 interface ExpandableRowProps {
     request: VacationRequest;
@@ -15,9 +14,10 @@ const renderAllVacationRequests = () => {
     const [ requests, setRequests ] = useState<VacationRequest[]>([]);
 
     useEffect(() => {
-        axios.get<VacationRequest[]>(`${apiBaseUrl}/requests`).then(res => {
-            setRequests(res.data as VacationRequest[]);
-        })
+        requestService.getAll()
+        .then(requests =>
+            setRequests(requests)
+        )
     }, [])
 
 /**

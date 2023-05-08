@@ -6,20 +6,37 @@ import axios from "axios";
 import { apiBaseUrl } from "../constants";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import requestService from "../services/vacRequests";
+import Remove from "./Remove";
 
 interface ExpandableRowProps {
     request: VacationRequest;
 }
 
 const renderMyVacations = () => {
-    const [ myRequests, setMyRequests ] = useState<VacationRequest[]>([]);
+    const [ requests, setRequests ] = useState<VacationRequest[]>([]);
 
     useEffect(() => {
         axios.get<VacationRequest[]>(`${apiBaseUrl}/requests/456789`).then(res => {
-            setMyRequests(res.data as VacationRequest[]);
-            console.log(myRequests);
+            setRequests(res.data as VacationRequest[]);
         })
+        console.log(requests);
     }, [])
+
+    // const deleteRequest = (id: number) => {
+    //     console.log(`poistetaan ${id}`);
+
+    // }
+
+    // const requestRef = useRef();
+    const addRequest = (requestObject: VacationRequest) => {
+        // requestRef.current()
+        requestService
+            .create(requestObject)
+            .then(returnedRequest => {
+                setRequests(requests.concat(returnedRequest))
+            })
+    };
     
     /**
      * Styled expandable table cell
@@ -68,7 +85,10 @@ const renderMyVacations = () => {
                         <Box sx={{ margin: 1, width: "100%" }}>
                             <Table size="small" aria-label="purchases">
                                 <TableBody>
-                                 { ApplyForVacation() }
+                                    <ApplyForVacation createRequest={addRequest}/>
+                                    <TableCell>
+                                        <Remove key={request.id} request={request}/>
+                                    </TableCell>
                                 </TableBody>
                             </Table>
                         </Box>
@@ -87,7 +107,7 @@ const renderMyVacations = () => {
             </Box>
             <Box>
                 <Typography>Apply for vacation</Typography>
-                { ApplyForVacation() }
+                <ApplyForVacation createRequest={addRequest}/>
             </Box>
             <TableContainer>
                 <Table aria-label="collapsible table" style={{ marginBottom: "1em" }}>
@@ -103,7 +123,7 @@ const renderMyVacations = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                    {Object.values(myRequests).map((request: VacationRequest) => (
+                    {Object.values(requests).map((request: VacationRequest) => (
                         <ExpandableRow key={request.id} request={request}/>
                     ))}
                     </TableBody>
