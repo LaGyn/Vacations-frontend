@@ -23,3 +23,5 @@ export enum VacationRequestStatus {
     APPROVED = 'APPROVED',
     DECLINED = 'DECLINED'
 }
+
+export type NewVacationRequest = Omit<VacationRequest, 'id'>;
